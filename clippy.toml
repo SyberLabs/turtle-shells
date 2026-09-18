@@ -1,0 +1,2 @@
+# Fail closed: clippy is invoked with -D warnings in CI and the P0 evidence gate.
+avoid-breaking-exported-api = false
