@@ -4,7 +4,8 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::{Parser, Subcommand, ValueEnum};
-use turtle_launcher::backend::{SandboxBackend, UnsupportedBackend};
+use turtle_launcher::backend::select_backend;
+use turtle_launcher::oci::SandboxRequest;
 use turtle_launcher::{compile_launch_plan, probe_host, P1_CLAIM_CEILING};
 use turtle_policy::path::RelPath;
 use turtle_policy::plan::enforcement_plan;
@@ -47,6 +48,10 @@ enum Commands {
     Run {
         #[arg(long)]
         manifest: PathBuf,
+        #[arg(long)]
+        rootfs: Option<PathBuf>,
+        #[arg(long)]
+        bundle: Option<PathBuf>,
     },
 }
 
@@ -101,7 +106,11 @@ fn main() -> ExitCode {
             work,
             subtree,
         } => export(&snapshot, &work, &subtree),
-        Commands::Run { manifest } => run(&manifest),
+        Commands::Run {
+            manifest,
+            rootfs,
+            bundle,
+        } => run(&manifest, rootfs, bundle),
     }
 }
 
@@ -174,7 +183,7 @@ fn export(snapshot: &PathBuf, work: &PathBuf, subtree: &[String]) -> ExitCode {
     }
 }
 
-fn run(path: &PathBuf) -> ExitCode {
+fn run(path: &PathBuf, rootfs: Option<PathBuf>, bundle: Option<PathBuf>) -> ExitCode {
     let policy = match load(path) {
         Ok(policy) => policy,
         Err(err) => return fail(&err),
@@ -186,10 +195,29 @@ fn run(path: &PathBuf) -> ExitCode {
     println!("launch_plan_cwd={}", plan.cwd);
     println!("host_network={}", plan.host_network);
     println!("claim_ceiling: {P1_CLAIM_CEILING}");
-    match UnsupportedBackend.create_frozen(&plan) {
-        Ok(_) => {
-            eprintln!("certified backend started; this path is not implemented");
-            ExitCode::from(1)
+    let bundle_dir = bundle.unwrap_or_else(|| {
+        std::env::temp_dir().join(format!("turtle-bundle-{}", std::process::id()))
+    });
+    let rootfs_dir = rootfs.unwrap_or_else(|| PathBuf::from("/nonexistent-turtle-rootfs"));
+    let backend = select_backend();
+    println!("backend={}", backend.id());
+    match backend.create_frozen(&SandboxRequest {
+        plan: &plan,
+        bundle_dir: &bundle_dir,
+        rootfs: &rootfs_dir,
+    }) {
+        Ok(frozen) => {
+            println!(
+                "frozen instance={} inspected={}",
+                frozen.instance_id, frozen.inspected
+            );
+            match turtle_launcher::gvisor::start(&frozen) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(err) => {
+                    let _ = turtle_launcher::gvisor::delete(&frozen);
+                    fail(&err)
+                }
+            }
         }
         Err(err) => fail(&err),
     }

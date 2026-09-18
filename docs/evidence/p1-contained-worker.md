@@ -23,7 +23,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 ```
 
-`test_exit=0`. **68 passed, 0 failed** on this host. Linux-only `openat2` copy/symlink tests compiled as empty (`linux_import.rs` ran 0 tests). `cargo check -p turtle-snapshot --target x86_64-unknown-linux-gnu` succeeded earlier in the same branch.
+`test_exit=0`. **73 passed, 0 failed** on this host after the gVisor run slice. Linux-only `openat2` copy tests remain empty here (`linux_import.rs` ran 0 tests). Live T04/T05/T07 skipped because `TURTLE_LIVE_SANDBOX` is unset and the host is uncertified. OCI inspect tests for host-network/docker.sock/SSH env ran and passed.
 
 ### Doctor and run (this host)
 
@@ -65,12 +65,13 @@ No `status=enforced` output.
 | T12 executable export mode | Linux-gated |
 | T24 caller-selected inference URL/tools | Stub tests passed |
 | T03 sibling binding replay (stub) | Passed |
-| T04/T05/T07/T08/T11 live sandbox | Not executed; host uncertified |
+| T04/T05/T07 OCI config | Portable inspect tests passed |
+| T04/T05/T07 live gVisor + host canary | Skipped on this host; CI job `live-sandbox` |
 
 ## What this evidence licenses
 
-P1 may be described as fail-closed admission, launch-plan compilation, Linux `openat2` import/export (compiled; live copy tests pending Linux CI), and an instance-bound inference stub. It may not be described as a sandbox on this Windows host, a credential broker, or a production-ready authorization system.
+P1 may be described as fail-closed admission, launch-plan compilation, OCI inspection for T04/T05/T07, Linux `openat2` import/export (compiled; live copy tests pending Linux CI), an instance-bound inference stub, and a gVisor `runsc create` path that only runs on a certified host. It may not be described as a sandbox on this Windows host, a credential broker, or a production-ready authorization system. Live T04/T05/T07 guest execution is evidenced only when `TURTLE_LIVE_SANDBOX=1` on a host with pinned `runsc` `release-20260817.0`.
 
 ## Next smallest milestone
 
-Certified Linux host with `runsc`: implement `GvisorBackend::create_frozen` inspect-before-start, then live T04/T05/T07. P2 remains MCP/provider adapters.
+Certified Linux host with pinned `runsc` `release-20260817.0`: confirm the CI `live-sandbox` job (guest probe exit 0 and host canary accepts == 0). Then P2 MCP/provider adapters.

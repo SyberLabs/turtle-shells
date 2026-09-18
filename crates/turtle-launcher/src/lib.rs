@@ -8,10 +8,12 @@
 
 pub mod backend;
 pub mod doctor;
+pub mod gvisor;
 pub mod oci;
 pub mod plan;
 
-pub use backend::{FrozenSandbox, SandboxBackend, UnsupportedBackend};
+pub use backend::{select_backend, FrozenSandbox, SandboxBackend, UnsupportedBackend};
 pub use doctor::{probe_host, HostProbe, P1_CLAIM_CEILING};
+pub use gvisor::GvisorBackend;
 pub use oci::{inspect_oci, write_oci_bundle, Inspection, SandboxRequest, RUNSC_RELEASE};
 pub use plan::{compile_launch_plan, EnvPlan, LaunchPlan, MountSource, MountSpec, NetworkPlan};
