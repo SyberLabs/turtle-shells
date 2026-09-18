@@ -1,0 +1,15 @@
+[package]
+name = "turtle-launcher"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "P1 sandbox launch plan and certified-backend probe. No containment claim on uncertified hosts."
+publish = false
+
+[dependencies]
+turtle-policy.workspace = true
+
+[[test]]
+name = "doctor"
+path = "tests/doctor.rs"

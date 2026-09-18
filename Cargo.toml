@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/turtle-policy",
     "crates/turtle-cli",
+    "crates/turtle-launcher",
     "tests/reference/turtle-policy-ref",
 ]
 
