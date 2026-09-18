@@ -8,6 +8,7 @@ description = "P1 sandbox launch plan and certified-backend probe. No containmen
 publish = false
 
 [dependencies]
+serde_json.workspace = true
 turtle-policy.workspace = true
 turtle-snapshot.workspace = true
 
