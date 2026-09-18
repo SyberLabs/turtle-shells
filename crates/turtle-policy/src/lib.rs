@@ -7,23 +7,32 @@
 #![deny(clippy::all)]
 
 pub mod actions;
+pub mod attenuate;
+pub mod budget;
 pub mod constraints;
+pub mod diff;
 pub mod digest;
 pub mod error;
+pub mod evaluate;
 pub mod grant;
 pub mod ids;
 pub mod jcs;
 pub mod limits;
 pub mod manifest;
 pub mod path;
+pub mod plan;
 pub mod reason;
 pub mod schema;
 pub mod yaml;
 
+pub use attenuate::check_attenuation;
+pub use diff::{diff_authority, AuthorityDiff};
 pub use digest::{policy_digest, Digest};
 pub use error::PolicyError;
+pub use evaluate::{evaluate, evaluate_layers, EffectRequest, Preconditions, TrustedContext};
 pub use grant::{EffectiveGrant, GrantClause, TurtleIdentity, TurtlePolicy};
 pub use manifest::parse_manifest;
+pub use plan::{enforcement_plan, EnforcementPlan, EnforcementStatus};
 pub use reason::{Decision, DecisionEvidence, Denial, ReasonCode};
 
 pub const API_VERSION: &str = "turtle.syberlabs.space/v0alpha1";

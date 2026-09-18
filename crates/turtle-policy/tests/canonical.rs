@@ -15,5 +15,8 @@ fn different_constraints_change_digest() {
     let mut yaml = String::from_utf8(WORKER.to_vec()).unwrap();
     yaml = yaml.replace("maxResponseBytes: 1048576", "maxResponseBytes: 1048575");
     let b = parse_manifest(yaml.as_bytes()).unwrap();
-    assert_ne!(policy_digest(&a).unwrap().hex(), policy_digest(&b).unwrap().hex());
+    assert_ne!(
+        policy_digest(&a).unwrap().hex(),
+        policy_digest(&b).unwrap().hex()
+    );
 }

@@ -14,3 +14,7 @@ saphyr-parser.workspace = true
 sha2.workspace = true
 hex.workspace = true
 thiserror.workspace = true
+
+[[test]]
+name = "adversarial_cross_product"
+path = "../../tests/adversarial/cross_product.rs"

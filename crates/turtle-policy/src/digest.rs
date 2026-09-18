@@ -1,5 +1,6 @@
 //! Domain-separated SHA-256 digests. No custom cryptography.
 
+use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 
 use crate::error::PolicyError;
@@ -24,6 +25,23 @@ impl Digest {
 impl std::fmt::Display for Digest {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&self.hex())
+    }
+}
+
+impl Serialize for Digest {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&self.hex())
+    }
+}
+
+impl<'de> Deserialize<'de> for Digest {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let hex = String::deserialize(deserializer)?;
+        let bytes = hex::decode(&hex).map_err(serde::de::Error::custom)?;
+        let arr: [u8; 32] = bytes
+            .try_into()
+            .map_err(|_| serde::de::Error::custom("digest must be 32 bytes"))?;
+        Ok(Digest(arr))
     }
 }
 
