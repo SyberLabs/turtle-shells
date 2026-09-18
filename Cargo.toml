@@ -4,6 +4,7 @@ members = [
     "crates/turtle-policy",
     "crates/turtle-cli",
     "crates/turtle-launcher",
+    "crates/turtle-snapshot",
     "tests/reference/turtle-policy-ref",
 ]
 

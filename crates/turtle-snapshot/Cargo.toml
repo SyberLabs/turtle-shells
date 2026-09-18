@@ -1,0 +1,11 @@
+[package]
+name = "turtle-snapshot"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "P1 snapshot import/export. Requires openat2; fails closed otherwise."
+publish = false
+
+[dependencies]
+turtle-policy.workspace = true
