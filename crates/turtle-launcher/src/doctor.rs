@@ -16,7 +16,7 @@ pub struct HostProbe {
 pub fn probe_host() -> HostProbe {
     let mut failures = Vec::new();
     let os = std::env::consts::OS;
-    let openat2 = false;
+    let openat2 = turtle_snapshot::openat2_available();
     if !cfg!(target_os = "linux") {
         failures.push(format!("host is {os}, not Linux"));
     }

@@ -9,6 +9,7 @@ publish = false
 
 [dependencies]
 turtle-policy.workspace = true
+turtle-snapshot.workspace = true
 
 [[test]]
 name = "doctor"
