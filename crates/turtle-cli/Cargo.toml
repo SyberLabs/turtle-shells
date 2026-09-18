@@ -4,7 +4,7 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
-description = "Owner CLI for Turtle P0 policy inspection. No containment claim."
+description = "Owner CLI for Turtle policy inspection and fail-closed P1 admission. No uncertified containment claim."
 publish = false
 
 [[bin]]
@@ -15,6 +15,9 @@ path = "src/main.rs"
 clap.workspace = true
 serde_json.workspace = true
 turtle-policy.workspace = true
+turtle-launcher.workspace = true
+turtle-snapshot.workspace = true
 
 [dev-dependencies]
 turtle-policy.workspace = true
+turtle-snapshot.workspace = true
