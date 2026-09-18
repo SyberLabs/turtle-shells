@@ -11,7 +11,17 @@ pub struct ExportRequest<'a> {
     pub export_subtrees: &'a [RelPath],
 }
 
-pub fn export_patch(_request: &ExportRequest<'_>) -> Result<ExportArtifact, PolicyError> {
-    let _ = _request;
-    Err(PolicyError::unsupported("openat2 unavailable"))
+pub fn export_patch(request: &ExportRequest<'_>) -> Result<ExportArtifact, PolicyError> {
+    if !crate::openat2_available() {
+        return Err(PolicyError::unsupported("openat2 unavailable"));
+    }
+    #[cfg(target_os = "linux")]
+    {
+        crate::linux::export_patch(request)
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = request;
+        Err(PolicyError::unsupported("openat2 unavailable"))
+    }
 }

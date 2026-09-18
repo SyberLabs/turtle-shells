@@ -19,6 +19,9 @@ fn scratch(label: &str) -> PathBuf {
 
 #[test]
 fn import_without_openat2_does_not_copy() {
+    if turtle_snapshot::openat2_available() {
+        return;
+    }
     let src = scratch("import-src");
     fs::write(src.join("a.txt"), b"hello").unwrap();
     let dest = scratch("import-dest").join("snap");
@@ -35,6 +38,9 @@ fn import_without_openat2_does_not_copy() {
 
 #[test]
 fn export_without_openat2_does_not_emit_files() {
+    if turtle_snapshot::openat2_available() {
+        return;
+    }
     let snap = scratch("export-snap");
     let work = scratch("export-work");
     fs::write(work.join("a.txt"), b"changed").unwrap();
