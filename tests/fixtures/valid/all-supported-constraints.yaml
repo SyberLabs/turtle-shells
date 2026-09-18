@@ -1,0 +1,70 @@
+apiVersion: turtle.syberlabs.space/v0alpha1
+kind: TurtlePolicy
+metadata:
+  name: all-constraints
+spec:
+  profile: strict-local-v1
+  runtime:
+    imageRef: registry:node-worker-v1
+    argv: ["/opt/agent/bin/worker"]
+    cwd: /workspace/repo
+    shell: false
+  lifetime:
+    maxSeconds: 60
+  filesystem:
+    snapshotRef: registry:src
+    mountAt: /workspace/repo
+    writableSubtrees: [src]
+    scratchMiB: 8
+    exportSubtrees: [src]
+  network:
+    mode: broker-only
+    rawDestinations: []
+  data:
+    readableClasses: [internal-source]
+    recipients: [owner-local]
+  credentials:
+    bindings: [cred-1]
+    export: false
+  grants:
+    - id: constrained
+      action: inference.generate
+      resource: registry:approved-model
+      credential: cred-1
+      recipients: [owner-local]
+      constraints:
+        maxInputBytes: 1024
+        minInputBytes: 1
+        maxOutputTokens: 16
+        maxResponseBytes: 2048
+        exactModel: registry:approved-model
+        pathSubtrees: [src]
+        approval: exact
+  mcp:
+    enabledTools: []
+    resourceReads: false
+    prompts: false
+    sampling: false
+    elicitation: false
+    asyncTasks: false
+  limits:
+    domain:
+      providerAttempts: 1
+      externalMutations: 0
+      inferenceOutputTokens: 16
+      outboundPayloadBytes: 2048
+      memoryMiB: 64
+      pids: 8
+      cpuMillisPerSecond: 100
+    local:
+      memoryMiB: 64
+      pids: 8
+      cpuMillisPerSecond: 100
+  delegation:
+    maxDepth: 0
+    maxLiveChildren: 0
+    maxTotalDescendants: 0
+    allowedTemplates: []
+  audit:
+    required: true
+    payloadMode: digest-and-metadata

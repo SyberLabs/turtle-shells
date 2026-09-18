@@ -1,0 +1,13 @@
+[package]
+name = "turtle-policy-ref"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Independent P0 reference evaluator. Does not call the production decision function."
+
+[dependencies]
+turtle-policy = { workspace = true }
+
+[dev-dependencies]
+proptest.workspace = true

@@ -1,0 +1,20 @@
+[package]
+name = "turtle-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Owner CLI for Turtle P0 policy inspection. No containment claim."
+publish = false
+
+[[bin]]
+name = "turtle"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+serde_json.workspace = true
+turtle-policy.workspace = true
+
+[dev-dependencies]
+turtle-policy.workspace = true

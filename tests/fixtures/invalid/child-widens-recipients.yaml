@@ -1,0 +1,64 @@
+apiVersion: turtle.syberlabs.space/v0alpha1
+kind: TurtlePolicy
+metadata:
+  name: rise-wide-child
+spec:
+  profile: strict-local-v1
+  runtime:
+    imageRef: registry:node-worker-v1
+    argv: ["/opt/agent/bin/worker"]
+    cwd: /workspace/repo
+    shell: true
+  lifetime:
+    maxSeconds: 900
+  filesystem:
+    snapshotRef: registry:rise-reviewed-source
+    mountAt: /workspace/repo
+    writableSubtrees: []
+    scratchMiB: 256
+    exportSubtrees: []
+  network:
+    mode: broker-only
+    rawDestinations: []
+  data:
+    readableClasses: [internal-source]
+    recipients: [owner-local, approved-code-provider, public-web]
+  credentials:
+    bindings: [github-rise-read]
+    export: false
+  grants:
+    - id: read-source
+      action: github.repository.read
+      resource: registry:rise-repository
+      credential: github-rise-read
+      recipients: [owner-local, approved-code-provider, public-web]
+      constraints:
+        maxResponseBytes: 1048576
+  mcp:
+    enabledTools: []
+    resourceReads: false
+    prompts: false
+    sampling: false
+    elicitation: false
+    asyncTasks: false
+  limits:
+    domain:
+      providerAttempts: 50
+      externalMutations: 0
+      inferenceOutputTokens: 0
+      outboundPayloadBytes: 1
+      memoryMiB: 1024
+      pids: 64
+      cpuMillisPerSecond: 1000
+    local:
+      memoryMiB: 1024
+      pids: 64
+      cpuMillisPerSecond: 1000
+  delegation:
+    maxDepth: 0
+    maxLiveChildren: 0
+    maxTotalDescendants: 0
+    allowedTemplates: []
+  audit:
+    required: true
+    payloadMode: digest-and-metadata

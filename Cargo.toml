@@ -1,6 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["crates/turtle-policy"]
+members = [
+    "crates/turtle-policy",
+    "crates/turtle-cli",
+    "tests/reference/turtle-policy-ref",
+]
 
 [workspace.package]
 version = "0.1.0"
@@ -15,4 +19,6 @@ saphyr-parser = "=0.0.12"
 sha2 = "=0.10.9"
 hex = "=0.4.3"
 thiserror = "=2.0.20"
+clap = { version = "=4.6.7", features = ["derive"] }
+proptest = "=1.11.0"
 turtle-policy = { path = "crates/turtle-policy" }

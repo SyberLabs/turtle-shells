@@ -1,0 +1,5 @@
+{
+  "action": "github.repository.write",
+  "resource": "registry:repo-a",
+  "note": "synthetic cross-product request; no secrets"
+}

@@ -15,6 +15,14 @@ sha2.workspace = true
 hex.workspace = true
 thiserror.workspace = true
 
+[dev-dependencies]
+proptest.workspace = true
+serde_json.workspace = true
+
 [[test]]
 name = "adversarial_cross_product"
 path = "../../tests/adversarial/cross_product.rs"
+
+[[test]]
+name = "adversarial_identity"
+path = "../../tests/adversarial/identity.rs"
