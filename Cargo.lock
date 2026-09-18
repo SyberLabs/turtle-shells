@@ -577,6 +577,7 @@ dependencies = [
 name = "turtle-launcher"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
  "turtle-policy",
  "turtle-snapshot",
 ]
