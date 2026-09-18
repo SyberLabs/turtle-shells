@@ -5,6 +5,7 @@ members = [
     "crates/turtle-cli",
     "crates/turtle-launcher",
     "crates/turtle-snapshot",
+    "crates/turtle-broker",
     "tests/reference/turtle-policy-ref",
 ]
 
@@ -28,3 +29,4 @@ getrandom = "=0.3.4"
 turtle-policy = { path = "crates/turtle-policy" }
 turtle-snapshot = { path = "crates/turtle-snapshot" }
 turtle-launcher = { path = "crates/turtle-launcher" }
+turtle-broker = { path = "crates/turtle-broker" }
