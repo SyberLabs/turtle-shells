@@ -7,7 +7,9 @@
 #![deny(clippy::all)]
 
 pub mod error;
+pub mod limits;
 pub mod reason;
+pub mod yaml;
 
 pub use error::PolicyError;
 pub use reason::{Decision, DecisionEvidence, Denial, ReasonCode};
