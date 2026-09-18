@@ -1,0 +1,175 @@
+{
+  "$id": "https://syberlabs.space/schemas/turtle-policy-v0alpha1.schema.json",
+  "title": "TurtlePolicy v0alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "turtle.syberlabs.space/v0alpha1" },
+    "kind": { "const": "TurtlePolicy" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,62}$" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "runtime", "lifetime", "filesystem", "network", "data", "credentials", "grants", "mcp", "limits", "delegation", "audit"],
+      "properties": {
+        "profile": { "const": "strict-local-v1" },
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["imageRef", "argv", "cwd", "shell"],
+          "properties": {
+            "imageRef": { "type": "string" },
+            "argv": { "type": "array", "items": { "type": "string" }, "maxItems": 32 },
+            "cwd": { "type": "string" },
+            "shell": { "type": "boolean" }
+          }
+        },
+        "lifetime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maxSeconds"],
+          "properties": {
+            "maxSeconds": { "type": "integer", "minimum": 1, "maximum": 86400 },
+            "expiresAt": { "type": "string" }
+          }
+        },
+        "filesystem": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["snapshotRef", "mountAt", "writableSubtrees", "scratchMiB", "exportSubtrees"],
+          "properties": {
+            "snapshotRef": { "type": "string" },
+            "mountAt": { "type": "string" },
+            "writableSubtrees": { "type": "array", "items": { "type": "string" }, "maxItems": 64 },
+            "scratchMiB": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+            "exportSubtrees": { "type": "array", "items": { "type": "string" }, "maxItems": 64 }
+          }
+        },
+        "network": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "rawDestinations"],
+          "properties": {
+            "mode": { "const": "broker-only" },
+            "rawDestinations": { "type": "array", "maxItems": 0 }
+          }
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["readableClasses", "recipients"],
+          "properties": {
+            "readableClasses": { "type": "array", "items": { "type": "string" }, "maxItems": 32 },
+            "recipients": { "type": "array", "items": { "type": "string" }, "maxItems": 64 }
+          }
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["bindings", "export"],
+          "properties": {
+            "bindings": { "type": "array", "items": { "type": "string" }, "maxItems": 32 },
+            "export": { "const": false }
+          }
+        },
+        "grants": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "recipients"],
+            "properties": {
+              "id": { "type": "string" },
+              "effect": { "enum": ["permit", "deny"] },
+              "action": { "type": "string" },
+              "actions": { "type": "array", "items": { "type": "string" }, "maxItems": 32 },
+              "resource": { "type": "string" },
+              "resources": { "type": "array", "items": { "type": "string" }, "maxItems": 64 },
+              "credential": { "type": "string" },
+              "recipients": { "type": "array", "items": { "type": "string" }, "maxItems": 64 },
+              "constraints": { "type": "object" },
+              "obligations": { "type": "object", "additionalProperties": false, "properties": { "approval": { "enum": ["none", "exact"] } } }
+            }
+          }
+        },
+        "mcp": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabledTools", "resourceReads", "prompts", "sampling", "elicitation", "asyncTasks"],
+          "properties": {
+            "enabledTools": { "type": "array", "items": { "type": "string" }, "maxItems": 32 },
+            "resourceReads": { "type": "boolean" },
+            "prompts": { "type": "boolean" },
+            "sampling": { "type": "boolean" },
+            "elicitation": { "type": "boolean" },
+            "asyncTasks": { "type": "boolean" }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["domain", "local"],
+          "properties": {
+            "domain": { "$ref": "#/$defs/domainBudgets" },
+            "local": { "$ref": "#/$defs/localBudgets" }
+          }
+        },
+        "delegation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maxDepth", "maxLiveChildren", "maxTotalDescendants", "allowedTemplates"],
+          "properties": {
+            "maxDepth": { "type": "integer", "minimum": 0, "maximum": 4 },
+            "maxLiveChildren": { "type": "integer", "minimum": 0, "maximum": 1024 },
+            "maxTotalDescendants": { "type": "integer", "minimum": 0, "maximum": 1024 },
+            "allowedTemplates": { "type": "array", "items": { "type": "string" }, "maxItems": 32 }
+          }
+        },
+        "audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "payloadMode"],
+          "properties": {
+            "required": { "type": "boolean" },
+            "payloadMode": { "const": "digest-and-metadata" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "domainBudgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerAttempts", "externalMutations", "inferenceOutputTokens", "outboundPayloadBytes", "memoryMiB", "pids", "cpuMillisPerSecond"],
+      "properties": {
+        "providerAttempts": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+        "externalMutations": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+        "inferenceOutputTokens": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+        "outboundPayloadBytes": { "type": "integer", "minimum": 0, "maximum": 1099511627776 },
+        "memoryMiB": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+        "pids": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "cpuMillisPerSecond": { "type": "integer", "minimum": 1, "maximum": 128000 }
+      }
+    },
+    "localBudgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memoryMiB", "pids", "cpuMillisPerSecond"],
+      "properties": {
+        "memoryMiB": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+        "pids": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "cpuMillisPerSecond": { "type": "integer", "minimum": 1, "maximum": 128000 }
+      }
+    }
+  }
+}

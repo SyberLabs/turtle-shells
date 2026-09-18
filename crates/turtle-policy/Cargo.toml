@@ -11,4 +11,6 @@ publish = false
 serde.workspace = true
 serde_json.workspace = true
 saphyr-parser.workspace = true
+sha2.workspace = true
+hex.workspace = true
 thiserror.workspace = true

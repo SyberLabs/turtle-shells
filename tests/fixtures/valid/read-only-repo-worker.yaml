@@ -1,0 +1,72 @@
+apiVersion: turtle.syberlabs.space/v0alpha1
+kind: TurtlePolicy
+metadata:
+  name: rise-worker
+spec:
+  profile: strict-local-v1
+  runtime:
+    imageRef: registry:node-worker-v1
+    argv: ["/opt/agent/bin/worker"]
+    cwd: /workspace/repo
+    shell: true
+  lifetime:
+    maxSeconds: 1800
+  filesystem:
+    snapshotRef: registry:rise-reviewed-source
+    mountAt: /workspace/repo
+    writableSubtrees: [src, tests]
+    scratchMiB: 512
+    exportSubtrees: [src, tests]
+  network:
+    mode: broker-only
+    rawDestinations: []
+  data:
+    readableClasses: [internal-source]
+    recipients: [owner-local, approved-inference-provider, approved-code-provider]
+  credentials:
+    bindings: [inference-project, github-rise-read]
+    export: false
+  grants:
+    - id: infer
+      action: inference.generate
+      resource: registry:approved-model
+      credential: inference-project
+      recipients: [approved-inference-provider]
+      constraints:
+        maxInputBytes: 262144
+        maxOutputTokens: 4096
+    - id: read-source
+      action: github.repository.read
+      resource: registry:rise-repository
+      credential: github-rise-read
+      recipients: [owner-local, approved-code-provider]
+      constraints:
+        maxResponseBytes: 1048576
+  mcp:
+    enabledTools: [github_repository_read]
+    resourceReads: false
+    prompts: false
+    sampling: false
+    elicitation: false
+    asyncTasks: false
+  limits:
+    domain:
+      providerAttempts: 500
+      externalMutations: 0
+      inferenceOutputTokens: 50000
+      outboundPayloadBytes: 16777216
+      memoryMiB: 4096
+      pids: 256
+      cpuMillisPerSecond: 2000
+    local:
+      memoryMiB: 2048
+      pids: 128
+      cpuMillisPerSecond: 2000
+  delegation:
+    maxDepth: 1
+    maxLiveChildren: 2
+    maxTotalDescendants: 4
+    allowedTemplates: [registry:read-only-reviewer]
+  audit:
+    required: true
+    payloadMode: digest-and-metadata

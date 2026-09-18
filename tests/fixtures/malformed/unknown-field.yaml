@@ -1,0 +1,57 @@
+apiVersion: turtle.syberlabs.space/v0alpha1
+kind: TurtlePolicy
+metadata:
+  name: extra-field
+spec:
+  profile: strict-local-v1
+  unexpected: true
+  lifetime:
+    maxSeconds: 10
+  filesystem:
+    snapshotRef: registry:src
+    mountAt: /workspace/repo
+    writableSubtrees: []
+    scratchMiB: 1
+    exportSubtrees: []
+  network:
+    mode: broker-only
+    rawDestinations: []
+  data:
+    readableClasses: [internal-source]
+    recipients: [owner-local]
+  credentials:
+    bindings: []
+    export: false
+  grants:
+    - id: r
+      action: github.repository.read
+      resource: registry:src
+      recipients: [owner-local]
+  mcp:
+    enabledTools: []
+    resourceReads: false
+    prompts: false
+    sampling: false
+    elicitation: false
+    asyncTasks: false
+  limits:
+    domain:
+      providerAttempts: 1
+      externalMutations: 0
+      inferenceOutputTokens: 0
+      outboundPayloadBytes: 1
+      memoryMiB: 64
+      pids: 8
+      cpuMillisPerSecond: 100
+    local:
+      memoryMiB: 64
+      pids: 8
+      cpuMillisPerSecond: 100
+  delegation:
+    maxDepth: 0
+    maxLiveChildren: 0
+    maxTotalDescendants: 0
+    allowedTemplates: []
+  audit:
+    required: true
+    payloadMode: digest-and-metadata

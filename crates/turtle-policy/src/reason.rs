@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 /// Stable, machine-readable denial/error code.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[allow(clippy::enum_variant_names)] // Codes are specified as E_* in the design contract.
 pub enum ReasonCode {
     ESchema,
     EUnknownAction,
